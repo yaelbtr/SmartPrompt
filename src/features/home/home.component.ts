@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { SampleButtonComponent } from '../../shared/components/sample-button.component';
-import { CapitalizePipe } from '../../shared/pipes/capitalize.pipe';
-import { HighlightDirective } from '../../shared/directives/highlight.directive';
 
 @Component({
   selector: 'sp-home',
   standalone: true,
-  imports: [SampleButtonComponent, CapitalizePipe, HighlightDirective],
-  template: `<h1>Welcome Home!</h1>
-    <sp-sample-button spHighlight>Click Me</sp-sample-button>
-    <p>{{ 'angular rocks' | capitalize }}</p>`
+  template: `
+    <div class="home-container">
+      <h1>Welcome to SmartPrompt</h1>
+      <p>Your production-ready Angular application.</p>
+    </div>
+  `,
+  styles: [`
+    .home-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #1976d2;
+      margin-bottom: 1rem;
+    }
+  `]
 })
 export class HomeComponent {}
