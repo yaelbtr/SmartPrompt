@@ -6,11 +6,16 @@ export const routes: Routes = [
     path: '',
     component: AppLayoutComponent,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'home' },
+      { path: '', pathMatch: 'full', redirectTo: 'library' },
       {
         path: 'home',
         loadChildren: () =>
           import('./features/home/home.routes').then((m) => m.homeRoutes),
+      },
+      {
+        path: 'library',
+        loadChildren: () =>
+          import('./features/library/library.routes').then((m) => m.libraryRoutes),
       },
     ],
   },
