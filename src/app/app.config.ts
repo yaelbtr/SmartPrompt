@@ -3,10 +3,11 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { API_CONFIG } from '../app/core/config/api-config';
-import { apiPrefixInterceptor } from '../app/core/interceptors/api-prefix.interceptor';
+
 import { environment } from '../environments/environment';
 
+import { API_CONFIG } from './core/config/api-config';
+import { apiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor';
 
 
 
@@ -15,6 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([apiPrefixInterceptor])),
-    { provide: API_CONFIG, useValue: { apiBaseUrl: environment.apiBaseUrl } }
-  ]
+    { provide: API_CONFIG, useValue: { apiBaseUrl: environment.apiBaseUrl } },
+  ],
 };
+
