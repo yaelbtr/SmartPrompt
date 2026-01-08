@@ -7,6 +7,9 @@ import { API_CONFIG } from '../core/config/api.config';
 import { apiInterceptor } from '../core/interceptors/example.interceptor';
 import { environment } from '../environments/environment';
 
+
+
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
