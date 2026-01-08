@@ -3,8 +3,8 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { API_CONFIG } from '../core/config/api.config';
-import { apiInterceptor } from '../core/interceptors/example.interceptor';
+import { API_CONFIG } from '../app/core/config/api.config';
+import { apiInterceptor } from '../app/core/interceptors/example.interceptor';
 import { environment } from '../environments/environment';
 
 
