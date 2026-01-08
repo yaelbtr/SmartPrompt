@@ -1,23 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ApiService } from '../../core/services/api.service';
+
+type Todo = { userId: number; id: number; title: string; completed: boolean };
 
 @Component({
-  selector: 'sp-home',
   standalone: true,
+  selector: 'sp-home',
+  imports: [CommonModule],
   template: `
-    <div class="home-container">
-      <h1>Welcome to SmartPrompt</h1>
-      <p>Your production-ready Angular application.</p>
-    </div>
+    <h1>Home</h1>
+
+    <button (click)="load()">Load Todo</button>
+
+    <pre *ngIf="state">{{ state | json }}</pre>
   `,
-  styles: [`
-    .home-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    h1 {
-      color: #1976d2;
-      margin-bottom: 1rem;
-    }
-  `]
 })
-export class HomeComponent {}
+export class HomeComponent {
+  private readonly api = inject(ApiService);
+  state: unknown;
+
+  load() {
+    this.api.get<Todo>('/todos/1').subscribe((res) => (this.state = res));
+  }
+}
