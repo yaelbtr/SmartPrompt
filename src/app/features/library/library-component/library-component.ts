@@ -36,12 +36,15 @@ export class LibraryComponent {
 
   items = computed(() => {
     const query = this.q().trim().toLowerCase();
-    const all = this.repo.list() as any[];
+    const all = this.repo.items();
     if (!query) return all;
     return all.filter(p =>
-      (p.title + ' ' + p.content + ' ' + p.tags.join(' ')).toLowerCase().includes(query)
+      (p.title + ' ' + p.content + ' ' + p.tags.join(' '))
+        .toLowerCase()
+        .includes(query)
     );
   });
+
 
   remove(id: string) {
     this.repo.remove(id);

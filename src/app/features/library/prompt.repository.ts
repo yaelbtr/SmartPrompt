@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { StorageService } from '../../core/services/storage.service';
 import { PromptItem } from './prompt.model';
 import { createId, nowIso } from './prompt.utils';
@@ -7,17 +7,24 @@ const KEY = 'smartPrompt.prompts.v1';
 
 @Injectable({ providedIn: 'root' })
 export class PromptRepository {
-  private readonly storage = inject(StorageService);
+  private readonly _items = signal<PromptItem[]>([]);
 
-  list(): PromptItem[] {
-    return this.storage.get<PromptItem[]>(KEY) ?? [];
+  constructor(private storage: StorageService) {
+    this._items.set(this.storage.get<PromptItem[]>(KEY) ?? []);
   }
 
-  getById(id: string): PromptItem | undefined {
-    return this.list().find(p => p.id === id);
+  items = this._items.asReadonly();
+
+  private persist(next: PromptItem[]) {
+    this._items.set(next);
+    this.storage.set(KEY, next);
   }
 
-  create(input: Pick<PromptItem, 'title' | 'content' | 'tags'>): PromptItem {
+  getById(id: string) {
+    return this._items().find(p => p.id === id);
+  }
+
+  create(input: Pick<PromptItem, 'title' | 'content' | 'tags'>) {
     const now = nowIso();
     const item: PromptItem = {
       id: createId(),
@@ -27,32 +34,25 @@ export class PromptRepository {
       createdAt: now,
       updatedAt: now,
     };
-    const next = [item, ...this.list()];
-    this.storage.set(KEY, next);
-    return item;
+    this.persist([item, ...this._items()]);
   }
 
-  update(id: string, patch: Partial<Pick<PromptItem, 'title' | 'content' | 'tags'>>): PromptItem {
-    const items = this.list();
-    const idx = items.findIndex(p => p.id === id);
-    if (idx === -1) throw new Error('Prompt not found');
-
-    const current = items[idx];
-    const updated: PromptItem = {
-      ...current,
-      title: patch.title !== undefined ? patch.title.trim() : current.title,
-      content: patch.content !== undefined ? patch.content.trim() : current.content,
-      tags: patch.tags !== undefined ? patch.tags : current.tags,
-      updatedAt: nowIso(),
-    };
-    const next = [...items];
-    next[idx] = updated;
-    this.storage.set(KEY, next);
-    return updated;
+  update(id: string, patch: Partial<Pick<PromptItem, 'title' | 'content' | 'tags'>>) {
+    const next = this._items().map(p =>
+      p.id === id
+        ? {
+            ...p,
+            ...patch,
+            title: patch.title?.trim() ?? p.title,
+            content: patch.content?.trim() ?? p.content,
+            updatedAt: nowIso(),
+          }
+        : p
+    );
+    this.persist(next);
   }
 
-  remove(id: string): void {
-    const next = this.list().filter(p => p.id !== id);
-    this.storage.set(KEY, next);
+  remove(id: string) {
+    this.persist(this._items().filter(p => p.id !== id));
   }
 }

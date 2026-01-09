@@ -1,6 +1,12 @@
 
 import { Injectable } from '@angular/core';
 
+export interface KeyValueStorage {
+  get<T>(key: string): T | null;
+  set<T>(key: string, value: T): void;
+  remove(key: string): void;
+}
+
 export type StorageDriver = 'local';
 
 @Injectable({ providedIn: 'root' })
